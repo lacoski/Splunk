@@ -23,12 +23,18 @@ then
 	echo "You need root permission to run this script"
 	exit 1
 fi
-
+check_pre_install(){
+	if [ -f "SPLUNK_DIRECT" ]
+	then
+		echo "You has allready installed Puppet!"
+		exit 1
+	fi
+}
 extra_rpm_splunk(){
 
 	if [ -f "$base_path/$SPLUNK_RPM_DIRECT/$SPLUNK_RPM" ]
 	then
-		rpm -iv --replacepkgs "$base_path/$SPLUNK_RPM_DIRECT/$SPLUNK_RPM"  
+		rpm -iv --replacepkgs "$base_path/$SPLUNK_RPM_DIRECT/$SPLUNK_RPM"
 	else
 		echo "Package not exist!"
 		exit 0
@@ -44,8 +50,9 @@ add_forwarder_splunk(){
 	$SPLUNK_DIRECT/bin/splunk add forward-server $IPSERVER:$PORT_forward
 }
 echo "Installing splunk forwarding"
+check_pre_install
 extra_rpm_splunk
-#run_splunk
-#deploy_splunk
-#add_forwarder_splunk
+run_splunk
+deploy_splunk
+add_forwarder_splunk
 echo "Done!"
